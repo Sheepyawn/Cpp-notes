@@ -207,8 +207,10 @@ We used the character '|' to terminate the input – anything that isn’t a dou
         for (char c : s)
             cout << c << '\t' << int(c) << endl;
     }
+    
 for (char c : s) cout << c << '\t' << int(c) << endl;
 能遍历输出字符串s的每个字符，因为std::string提供了迭代器接口。。。
+
 ![img](img/2026-02-16-21-31-21.png)
 
 ### 副本与使用引用
@@ -237,7 +239,9 @@ for (char c : s) cout << c << '\t' << int(c) << endl;
     }
 
 西兰花不会被成功替换，因为第二个for循环的word是数组元素的副本，修改时不会修改原数组。
+
 ![img](img/2026-03-08-16-32-53.png)
+
 更正：使用引用，for (string &word : words)
 
 ## 26/02/14
@@ -267,7 +271,9 @@ for (char c : s) cout << c << '\t' << int(c) << endl;
     }
 
 输入1yuan,会输出“1y is 0.0065 dollars”，而非 “Sorry I don't know a unit called yuan”。
+
 ![img](img/2026-03-08-16-31-00.png)
+
 因为cin在从缓冲区读取时，只会读取yuan的第一个字符y，使得程序执行'y'分支。
 
 ## 26/02/13
@@ -298,6 +304,7 @@ for (char c : s) cout << c << '\t' << int(c) << endl;
     }
 
 输入3.1，按下回车，不等输入第二个值，程序直接显示输入结果。
+
 ![alt text](img/image-3.png)
 
 cin>>val1时：cin从缓冲区读取3后读取到小数点，停止读取，3存入val1。
