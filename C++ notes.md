@@ -1,5 +1,75 @@
 # C++ Notes
 
+## 26/03/09
+
+### 异常输出多字符字面量
+
+    void exercise12()
+    {
+        vector<int> target;
+        int seconds = time(0);
+        default_random_engine engine(seconds);
+        uniform_int_distribution<int> dist(0, 9);
+        for (int i = 0; i < 4; ++i)
+            target.push_back(dist(engine));
+        
+        cout << "target.size() == " << target.size() << '\n';
+        cout << "The answer is: ";
+        for (int i = 0; i < target.size(); ++i)
+            cout << target[i];
+        cout << ' !' << '\n';
+    }
+
+程序会输出8位数，但后四位始终输出8225。
+起初以为是越界访问了，但target.size()大小正确。
+调试发现，cout << ' !' << '\n';，这一行输出了4个数，而' !'为“空格+！”，是多字符字面量。
+多字符字面量将字符组合成一个一个整数，输出它的数值表示，而不是字符。
+
+    int main()
+    {
+        cout << ' !' << '\n';
+    }
+
+![img](img/2026-03-09-09-13-42.png)
+
+### cin的状态
+
+    int input = -1;
+    int count = 0;
+    string s = "^_^";
+    bool incorrect = true;
+    while (incorrect)
+    {
+        cin >> input;
+        cin >> s;
+        if(s != "^_^")
+            cout << "Invalid input, you should enter a 4-digit integer." << '\n';
+        else
+        {
+            if ((input < 1000) || (input > 9999))
+                cout << "Invalid input. A 4-digit number is required." << '\n';
+            cout << "Input == " << input << '\n';
+        }
+        s = "^_^";
+        ++count;
+    }
+
+第一次输入“\*”，会使cin进入错误状态，会跳过第二次输入，导致缓冲区的“\*”不会被消费，程序进入死循环。
+
+    int x;
+    string s;
+
+    cin >> x;
+    //cin.clear();
+    cin >> s;
+
+    cout << "x == " << x << '\n'
+        << "s == " << s << '\n';
+
+![img](img/2026-03-09-11-09-43.png)
+
+使用cin.clear()重新设置cin为默认的正确状态。
+
 ## 26/03/08
 
 ### cout的状态
