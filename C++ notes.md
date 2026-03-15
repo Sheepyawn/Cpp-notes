@@ -1,5 +1,76 @@
 # C++ Notes
 
+## 26/03/15
+
+### 输入数据超出int范围使cin进入错误状态
+
+    void input_pairs(vector<Name_value> Nvs)
+    {
+        bool duplicate_name = false;
+        string name = " ";
+        int grade = -1;
+        while (true)
+        {
+            duplicate_name = false;
+            cin >> name >> grade;
+
+            //结束输入
+            if (name == "NoName" && grade == 0)
+                break;
+            
+            //检查输入名字是否已存在
+            for (Name_value x : Nvs)
+            {
+                if (name == x.name)
+                {
+                    duplicate_name = true;
+                    break;
+                }
+            }
+            if (duplicate_name)
+            {
+                cout << "It's a duplicate name, you have entered it before." << '\n';
+            }
+            else
+            {
+                Name_value nv(name, grade);
+                Nvs.push_back(nv);
+            }
+        }
+    }
+
+输入（5，55555555555555555555555），程序会进入死循环，持续打印“It's a duplicate name, you have entered it before.”
+![img](img/2026-03-15-09-45-53.png)
+
+因为55555555555555555555555超出了int的最大范围2147483647，使cin进入错误状态。
+在第二次及以后的循环，name和grade的值始终为第一次输入的值。
+
+可以输入字符，然后转换为数字，因为输入字符基本不会使cin出错；
+或者每次循环结束时重置cin的状态。
+
+## 26/03/11
+
+### cin.putback()
+
+    int main()
+    {
+        char i = '/';
+        cin >> i;
+        cin.putback(i);
+        int c = 0;
+        cin >> c;
+        cout << "c == " << c;
+    }
+
+输入565623，控制台打印565623，觉得奇怪，因为char只能存-128到127。
+![img](img/2026-03-13-10-15-37.png)
+
+实际流程为：输入565623，i只读取了一个字符‘5’，缓冲区还剩下65623。
+然后cin.putback(i)把‘5’放回缓冲区。
+cin又把565623全部读入c。
+![img](img/2026-03-13-10-13-41.png)
+注释掉cin.putback(i);后可以看到控制台打印的是65623
+
 ## 26/03/09
 
 ### 异常输出多字符字面量
