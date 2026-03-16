@@ -1,6 +1,132 @@
 # C++ Notes
 
+## 26/03/16
+
+### int类型 与 阶乘
+
+    int main()
+    {
+        int fac = 1;
+        for (int i = 1; i < 20; ++i)
+        {
+            for (int j = i; j > 0; --j)
+            {
+                fac *= j;
+            }
+            cout << "fac(" << i << ") == " << fac << '\n';
+            fac = 1;
+        }
+    }
+![img](img/2026-03-16-15-24-10.png)
+12! == 479001600;
+13! == 6227020800 > 2147483647 (图中显示1932053504是因为只保留了32位的值，超出部分被截断)
+所以int类型最多只能存12!。
+
+### cin输入ctrl+z
+
+    string s;
+    while (true)
+    {
+        std::cin >> s;
+        
+        //省略中间代码...
+
+        s.clear();
+    }
+
+string 能存储所有字符，所以cin很难进入错误状态。
+但如果单独输入ctrl+z，会使cin进入错误状态。
+可以在上面的循环末尾加上cin.clear();重置cin的状态。
+
+另外，ctrl+Z 只有在单独一行时才会被识别为 EOF。如果它出现在其他字符之后，则会被视为普通字符。
+
+    int main()
+    {
+        string s;
+        int count = 0;
+        while (count < 10)
+        {
+            cin >> s;
+            ++count;
+        }
+        cout << "end successfully";
+    }
+
+![img](img/2026-03-16-10-15-37.png)
+![img](img/2026-03-16-10-15-59.png)
+
 ## 26/03/15
+
+### <<和&&的优先级
+
+    int main()
+    {
+        int num1 = 0b1010;
+        int num2 = 0b1001;
+
+        cout << (cout << num1 && num2;)
+    }
+
+![img](img/2026-03-15-17-32-37.png)
+输出了10，因为“<<”的优先级比“&&”高，所以输出的实际上是0b1010的十进制值，然后计算(cout)&&(0b1001)为true;
+
+cout << (cout << num1 && num2); 输出：
+![img](img/2026-03-15-17-34-45.png)
+
+正确的写法为
+    int num1 = 0b1010;
+    int num2 = 0b1001;
+    cout << bitset<4>(num1 & num2);
+![img](img/2026-03-15-17-37-48.png)
+
+    int main()
+    {
+        int x = 10;
+        int y = 10;
+        cout << "x&y == " << x & y << '\n'
+            << "x|y == " << x | y << '\n'
+            << "x^y == " << x ^ y << '\n'
+            << "~x == " << ~x << '\n'
+            << "!x == " << !x << '\n';
+    }
+编译器提示表达式具有未区分范围的枚举类型，也是因为运算符“<<”优先级比“按位运算符”高
+
+### 异常处理
+
+    void error(string s)
+    {
+        throw runtime_error(s);
+    }
+
+    int main()
+    {
+        try
+        {
+            int num;
+            cin >> num;
+            switch (num)
+            {
+            case 0:
+                error("0");
+                cout << "and 0" << '\n';
+                break;
+            }
+        }
+        catch (exception& e)
+        {
+            cerr << "Exception: " << e.what() << '\n';
+            return 1;
+        }
+        catch (...)
+        {
+            cerr << "Unknown exception" << '\n';
+            return 2;
+        }
+    }
+
+在case 0:分支的error()函数抛出异常后，程序的控制权就会立即转移给异常处理机制，当前作用域内剩余的正常执行流程都会被中断。
+![img](img/2026-03-15-16-13-49.png)
+控制台没有打印“and 0”。
 
 ### 输入数据超出int范围使cin进入错误状态
 
