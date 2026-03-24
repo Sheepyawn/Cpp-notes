@@ -1,5 +1,97 @@
 # C++ Notes
 
+## 26/03/24
+
+### cin.get()
+
+cin.get()可以读取输入流中的空格和换行符
+
+    while (cin)
+    {
+        char ch = cin.get();    //也可以char ch; cin.get(ch);
+        if (ch == '\n')
+            cout << "find a \\n";
+        if (ch == ' ')
+            cout << "find a whitespace.";
+        if (isspace(ch))
+            cout << " That's a space." << '\n';
+    }
+
+![img](img/2026-03-24-10-52-23.png)
+
+## 26/03/22
+
+### 标准库函数isaplha()
+
+    int main()
+    {
+        isalpha('）');
+        return 0;
+    }
+
+![img](img/2026-03-22-17-30-51.png)
+函数参数的值超出了有效范围[-1，255]。
+
+## 26/03/19
+
+### 函数参数引用传递
+
+    void deal_with_plus_sign(string &s)
+    {
+        if (s[0] == '+')
+            s.erase(0, 1);
+    }
+
+    bool is_integer(string s)
+    {
+        deal_with_plus_sign(s);
+        for (char x : s)
+        {
+            if (x < '0' || x > '9')
+                return false;
+        }
+        return true;
+    }
+
+    int string_to_positive_integer(string s)
+    {
+        if (is_integer(s))
+        {
+            int num = 0;
+            int digit = 1;
+            int size = s.size();
+            int add = -1;
+            for (int i = size - 1; i > -1; --i)
+            {
+                add = (s[i] - '0') * digit;
+                //边界检查
+                if (num > numeric_limits<int>::max() - add)
+                    return -1;
+                num += add;
+                digit *= 10;
+            }
+            return num;
+        }
+        else
+            return -1;
+    }
+
+deal_with_plus_sign(string &s)是新加的用于处理正号的函数。
+只在这个函数里使用引用类型，程序仍不能正常运行。
+因为它只修改了is_integer() 从 string_to_positive_integer()获取的字符串s的副本，
+没有改变string_to_positive_integer()使用的字符串s。
+
+需要在is_integer()内也使用引用类型。is_integer(string &s)
+
+## 26/03/17
+
+### ixx文件的函数声明没有加参数
+
+![img](img/2026-03-17-09-49-04.png)
+![img](img/2026-03-17-09-49-24.png)
+
+连接错误，编译器找不到无参数的test1()函数实现。
+
 ## 26/03/16
 
 ### int类型 与 阶乘
