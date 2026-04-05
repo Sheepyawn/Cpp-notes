@@ -1,5 +1,134 @@
 # C++ Notes
 
+## 26/04/05
+
+### vector是动态数组
+
+    constexpr vector<string> reverse_vector_1(const vector<string>& v)
+
+vecotr在堆上分配内存，而编译器没有堆内存。
+所以这句的constexpr没有起到作用，跟没有一样。
+“A constexpr function behaves just like an ordinary function until you use it where a constant is needed. Then, it is calculated at compile time and its arguments must be constant expressions and gives an error if they are not ”
+
+## 26/04/04
+
+### cout的精度
+
+cout 默认输出浮点数时，只会显示 6 位有效数字
+
+    vector<double> v{ 1.0, 0.99999, 1.000001, 0.5, 1.05 - 1, };
+    double max = maxv(v);
+    cout << "The max num of the vector is " << max << '\n';
+
+输出了1，而不是1.000001。
+因为1.000001有7位有效数字。
+
+使用cout.precision(10);显示更多有效数字。
+
+## 26/04/03
+
+### vector初始化
+
+    vector<string> name(5);
+
+(5)没有限定name的大小为5，只是初始化大小为5的数组，用空字符串填充了这5个位置。
+
+    name.push_back("Guess where I am?");
+
+新插入的s的下标是5，而不是0。
+
+### 比较时，有符号整数被隐式转换为无符号整数
+
+    //输入字符串转换为正整数和0
+    int string_to_positive_integer(string s)
+    {
+        if (is_integer(s))
+        {
+            int num = 0;
+            int digit = 1;
+            size_t size = s.size();
+            int add = -1;
+            for (size_t i = size - 1; i > -1; --i)
+            {
+                add = (s[i] - '0') * digit;
+                //边界检查
+                if (num > numeric_limits<int>::max() - add)
+                    return -1;
+                num += add;
+                digit *= 10;
+            }
+            return num;
+        }
+        else
+            return -1;
+    }
+
+for循环永远不会执行。
+因为i是无符号类型size_t，-1和i比较时，被转换为4294967295。
+
+## 26/04/02
+
+### 编译器语法检查
+
+有时程序能运行，但编译器提示错误。
+![img](img/2026-04-02-08-41-35.png)
+
+这时可以刷新一下visual studio的语法检查，InteliSense
+![img](img/2026-04-02-08-42-55.png)
+
+刷新后
+![img](img/2026-04-02-08-43-32.png)
+
+### 模块中导出命名空间
+
+drill_2.ixx
+
+    export module drill_2;
+
+    import std;
+
+    namespace X
+    {
+        int var;
+        void print()
+        {
+            std::cout << "var == " << var << '\n';
+        }
+    }
+
+main.cpp
+
+    import PPP;
+    import drill_2;
+
+    int main()
+    {
+        X::var = 1;         //编译器提示：命名空间“X”没有成员“var”。
+    }
+
+这是因为drill_2.ixx中定义了命名空间X，但没有导出。
+
+而stroustrup提供的PPP.ixx模块：
+
+    export module PPP;      
+    export import std;      
+    #define PPP_EXPORT export       //将 PPP_EXPORT 定义为 export 关键字
+
+    namespace PPP
+    {
+        ...
+
+        PPP_EXPORT inline void error(const std::string& s)      // error() simply disguises throws
+        {
+            throw std::runtime_error(s);
+        }
+
+        ...
+    }
+
+模块中将PPP_EXPORT 定义为 export 关键字，使用PPP_EXPORT导出命名空间中定义的函数。
+我没有发现函数被导出了。
+
 ## 26/03/31
 
 ### cin.putbacK()
