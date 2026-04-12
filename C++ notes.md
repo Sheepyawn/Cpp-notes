@@ -1,5 +1,165 @@
 # C++ Notes
 
+## 26/04/12
+
+### 文件复制
+
+在Windows桌面复制文件到Visual Studio的解决方案的项目文件里，然后尝试使用ifstream打开。
+
+    string iname;
+    //cin >> iname;
+    iname = "temperature_readings.txt";
+    ifstream ist{ iname };                          // ist reads from the file named iname
+    if (!ist)
+        PPP::error("can't open input file ", iname);
+
+打开文件失败。
+在文件资源管理器中打开temperature_readings.txt，发现打开的是桌面，说明文件没有被复制到项目的同一目录下。
+“Visual Studio 只是创建了一个文件引用（链接），并没有真正把文件复制到项目文件夹中。文件物理位置仍然在桌面。”
+
+## 26/04/10
+
+### 运算符重载：[]只能是成员函数
+
+    enum class Month2
+    {
+        jan = 1, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec
+    };
+
+    Month2 operator[](const int& m)
+    {
+        return Month2{ m };
+    }
+
+想通过重载[]运算符实现通过Month[5]直接返回may的功能，类似使用数组下标。
+但[]只能是成员函数，不能作为全局函数重载。
+
+得这样实现：
+
+    struct Month3
+    {
+        Month2 operator[](const int& m)
+        {
+            return Month2{ m };
+        }
+    };
+    Month3 month;
+    Month2 m3 = month[5];
+    Month2 m4 = month[0];
+    cout << m3 << '\n';
+    cout << m4 << '\n';
+
+全部代码：
+
+    enum class Month2
+    {
+        jan = 1, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec
+    };
+
+    struct Month3
+    {
+        Month2 operator[](const int& m)
+        {
+            return Month2{ m };
+        }
+    };
+
+    int to_int(Month2 m)
+    {
+        return static_cast<int>(m);
+    }
+
+    vector<string> month_tbl
+    {
+        "Not a month", "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    };
+
+    ostream& operator<<(ostream& os, Month2 m)
+    {
+        return os << month_tbl[to_int(m)];
+    }
+
+    int main()
+    {
+        Month3 month;
+        Month2 m3 = month[5];
+        Month2 m4 = month[0];
+        cout << m3 << '\n';
+        cout << m4 << '\n';
+    }
+
+输出结果：
+May
+Not a month
+
+### enum class 和 enum
+
+    enum Month
+    {
+        jan = 1, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec
+    };
+
+    enum Day_of_Wekk
+    {
+        Monday = 1, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday
+    };  
+
+    void bad_code(Month m)
+    {
+        if (m == 17)
+            cout << "do_something" << '\n';
+        if (m == Monday)
+            cout << "do_something_else" << '\n';
+    }
+
+使用bad_code(jan);
+控制台会输出：“do_something”.
+"In addition to the enum classes, also known as scoped enumerations, there are “plain” enumerations that differ from scoped enumerations by implicitly “exporting” their enumerators to the scope of the enumeration and allowing implicit conversions to int."
+
+推荐使用：
+
+    enum class Month
+    {
+        jan = 1, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec
+    };
+
+"The class in enum class means that the enumerators are in the scope of the enumeration. That is, to refer to jan, we have to say Month::jan."
+
+另外，虽然没有定义其他月份的值，但是
+"If you leave it to the compiler to pick, it’ll give each enumerator the value of the previous enumerator plus one."
+
+可以把枚举类型认为是和int、double一样，但类型不同的数字。
+"Note the use of the qualification of the enumerator mar with the enumeration name: Month::mar. We don’t say Month.mar because Month isn’t an object (it’s a type) and mar isn’t a data member (it’s an enumerator – a symbolic constant)."
+
+## 26/04/07
+
+### const对象只能调用const成员函数
+
+struct Date
+{
+    int year() { return y; }
+    int month() { return m; }
+    int day() { return d; }
+private:
+    int y;
+    int m;
+    int d;
+}
+
+ostream& operator<<(ostream& os, const Date& d)
+{
+        return os << d.year() << '/' << d.month() << '/' << d.day();
+}
+给形参Date d加上const和引用类型后，
+编译器提示：对象含有与成员函数不兼容的类型限定符。
+这是因为编译器无法确定.year(),.month(),.day()是否会修改对象，拒绝调用。
+应使这三个函数为const成员函数。
+
+    int year() const { return year_; }   // 加上 const
+    int month() const { return month_; } // 加上 const
+    int day() const { return day_; }     // 加上 const
+
 ## 26/04/05
 
 ### vector是动态数组
