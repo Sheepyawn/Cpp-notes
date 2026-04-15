@@ -1,5 +1,148 @@
 # C++ Notes
 
+## 26/04/15
+
+### 模块文件的后缀
+
+exercise_02.cpp
+
+    export module exercise_02;
+
+    import PPP;
+    using namespace std;
+
+    namespace ex_02
+    {
+        export void test()
+        {
+            std::cout << "OK" << '\n';
+            PPP::error("okok");
+        }
+    }
+
+8.exercises.ixx
+
+    export module exercises;
+
+    export import exercise_02;
+
+![img](img/2026-04-15-09-51-55.png)
+
+main.cpp
+
+    import exercises;
+    import std;
+
+    int main()
+    {
+        try
+        {
+            ex_02::test();
+
+            return 0;
+        }
+        catch (std::exception& e)
+        {
+            std::cerr << "error: " << e.what() << '\n';
+            return 1;
+        }
+        catch (...)
+        {
+            std::cerr << "Oops: unknown exception!" << '\n';
+            return 2;
+        }
+    }
+
+![img](img/2026-04-15-09-52-22.png)
+
+程序正常运行，但是编译器语法检查报错。
+在debug文件里，确实也找不到模块对应的.dt文件，但是能找到.ifc文件(C++模块的接口文件)。
+
+将exercise_02.cpp的文件后缀改为.ixx，语法检查不报错了，文件夹里也出现了对应模块的.dt文件
+![img](img/2026-04-15-09-55-58.png)
+![img](img/2026-04-15-09-56-10.png)
+
+把文件后缀再改回.cpp，语法检查又报了相同的错误，但是Debug文件夹里的.dt文件文件还在。
+重新生成后，8.exercises.ixx对应的.dt文件不见了，exercise_02.cpp对应的.dt文件还在，不过是之前生成的。
+
+ds:.cpp 文件 → 传统编译模式 → export module 语法不被识别 → 编译报错
+
+查看Microsoft文档：[https://learn.microsoft.com/en-us/cpp/cpp/import-export-module?view=msvc-170](https://learn.microsoft.com/en-us/cpp/cpp/import-export-module?view=msvc-170)
+“Place a module declaration at the beginning of a module implementation file to specify that the file contents belong to the named module.”
+
+    module ModuleA;
+
+在文件开头使用module而不加export，只是表明这个文件的内容属于同名的模块。
+
+“The export module keywords in the first line declare that this file is a module interface unit. There's a subtle point here: **for every named module, there must be exactly one module interface unit** with no module partition specified. That module unit is called the primary module interface unit.”
+
+添加hello.cpp和hello2.cpp测试：
+hello.cpp:
+
+    module exercise_02;
+
+    import std;
+
+    void test_02()
+    {
+        std::cout << "Hello~" << '\n';
+    }
+
+hello2.cpp:
+
+    module exercise_02;
+
+    import std;
+
+    void test_03()
+    {
+        std::cout << "Hello hello." << '\n';
+    }
+
+修改exercise_02.ixx
+
+    export module exercise_02;
+
+    import PPP;
+    using namespace std;
+
+    export void test_02();      //在接口文件内导出test_02().
+    export void test_03();      //在接口文件内导出test_03().
+
+    namespace ex_02
+    {
+        export void test()
+        {
+            std::cout << "OK" << '\n';
+            PPP::error("okok");
+        }
+    }
+
+输出：
+Hello~
+Hello hello.
+OK
+error: okok
+
+hello.cpp和hello2.cpp函数的正常运行，验证了：只使用module，只是表明这个文件的内容属于同名的模块。
+
+“Module unit implementation files don't end with an .ixx extension--they're normal .cpp files.”
+
+“**It(the exported module interface unit) has an .ixx extension by default.** However, you can treat a source file with any extension as a module interface file. To do so, set the Compile As property in the Advanced tab for the source file's properties page to Compile As Module (/interface):”
+
+![img](img/2026-04-15-10-51-57.png)
+
+现在把exercise_02.ixx的后缀改为.cpp，显然编译器语法检查会提示错误。
+按照上面的提示操作：
+
+![img](img/2026-04-15-10-55-06.png)
+
+改完后，语法检查不报错了。
+
+总结：
+不想单独写模块实现对应的接口文件的话，要把实现文件的后缀改为.ixx。
+或者在文件属性页面修改它的编译选项。
+
 ## 26/04/12
 
 ### 文件复制
