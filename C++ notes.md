@@ -1,5 +1,101 @@
 # C++ Notes
 
+## 26/04/20
+
+### git的可执行文件
+
+git的可执行文件为安装目录的bin文件夹里的git.exe，而不是安装目录的git-bash.exe(只是一个终端模拟器).
+
+### 使用class里的枚举类enum class
+
+    class Font {
+    public:
+        enum Font_type {
+            helvetica,
+            helvetica_bold,
+            helvetica_italic,
+            helvetica_bold_italic,
+            courier,
+            courier_bold,
+            courier_italic,
+            courier_bold_italic,
+            times,
+            times_bold,
+            times_italic,
+            times_bold_italic,
+            symbol,
+            screen,
+            screen_bold,
+            zapf_dingbats
+        };
+
+        Font(Font_type ff) :f(ff) { }
+
+        int as_int() const { return f; }
+    private:
+        int f;
+    };
+
+    使用 Font(Font_type ff) :f(ff) { }这个构造函数，要在参数面前加上作用域——Font::
+
+## 26/04/19
+
+### 函数内不能定义另一个函数
+
+    int main(int /*argc*/, char* /*argv*/[])
+    { 
+        using namespace Graph_lib;                                        // our graphics facilities are in Graph_lib
+
+        Application app;                                                  // start a Graphics/GUI application
+
+        Point tl{ 900,500 };                                              // to become top left corner of window
+
+        Simple_window win{ tl,600,400,"Canvas" };                         // make a simple window
+
+        // e.g.10_3
+        //Polygon poly;                                                   // make a shape (a polygon)
+        //poly.add(Point{ 300,200 });                                     // add a point
+        //poly.add(Point{ 350,100 });                                     // add another point
+        //poly.add(Point{ 400,200 });                                     // add a third point
+        //poly.set_color(Color::red);                                     // adjust properties of poly
+        //win.attach(poly);                                               // connect poly to the window
+
+        // e.g.10_7
+        Axis xa{ Axis::x, Point{20, 300}, 280, 10, "x axis" };            // make an Axis
+        // an Axis is a kind of Shape
+        // Axis::x means horizontal
+        // starting at (20,300)
+        // 280 pixels long
+        // with 10 "notches"
+        // label the axis "x axis"
+        win.attach(xa);                                                   // attach xa to the window, win
+        win.set_label("X axis");                                          // re-label the window
+        win.wait_for_button();                                            // display!
+
+        Axis ya{ Axis::y, Point{20,300}, 280, 10, "y axis" };
+        ya.set_color(Color::cyan);                                        // choose a color for the y axis
+        ya.label.set_color(Color::dark_red);                              // choose a color for the text
+        win.attach(ya);
+        win.set_label("Y axis");
+        win.wait_for_button();                                            // display!
+
+        double dsin(double d）
+        {
+            return sin(d); 
+        }                          // chose the right sin() (§13.3)
+
+        Function sine{ dsin, 0, 100, Point{20,150}, 1000, 50, 50 };       // sine curve
+        // plot sin() in the range [0:100) with (0,0) at (20,150)
+        // using 1000 points; scale x values *50, scale y values *50
+
+        win.attach(sine);
+        win.set_label("Sine");
+        win.wait_for_button();
+    }
+
+dsin()的第一个大括号报错。
+在其他文件直接定义函数习惯了，没注意这个函数定义在main函数里。
+
 ## 26/04/16
 
 ### 零填充命名
