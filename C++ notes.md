@@ -1,5 +1,61 @@
 # C++ Notes
 
+## 26/05/04
+
+### 用const int& 和 int 给类成员赋值
+
+    class Patron
+    {
+    public:
+        //...
+    private:
+        string name;
+        int number;
+        int fees = 0;
+    };
+
+Patron::Patron(string n, int num, int f) : name{ n }, number{ num }, fees{ f } {}
+Patron::Patron(const string& n, const int& num, const int& f) : name{ n }, number{ num }, fees{ f } {}
+
+const int& 创建了临时对象，临时对象的值被拷贝到类的成员。拷贝完成后，临时对象被销毁。
+在构造时发生了拷贝，所以类成员没有引用到空对象。
+
+ds：
+用int： 实参-> n -> name;
+用const int&: n -> name;
+用const + 引用类型少了一次拷贝，不过在小类型，int，上的差别不大。
+对string类型，可以用const string& 作为参数。
+
+int类型占4字节，引用类型占8字节，用引用类型反而会占用更多空间。
+
+## 26/05/03
+
+### Class默认继承方式
+
+    class B1
+    {
+    public:
+        virtual void vf() const { cout << "B1::vf()" << '\n'; }
+        void f() const { cout << "B1::f()" << '\n'; }
+    };
+
+    class D1 : B1
+    {
+    public:
+        void vf() const override { cout << "D1::vf()" << '\n'; }
+    };
+
+    D1 d1;
+    d1.vf();
+    d1.f();
+
+d1.f()报错：error C2247: “B1::f”不可访问，因为“D1”使用“private”从“B1”继承
+这是因为class的默认继承方式是private——B1 的所有公有成员在 D1 中都变成了私有的，无法从外部访问。
+“If a base of class D is private, its public and protected member names can be used only by members of D.”
+
+要在对象d1中使用B1的f()，可以使用public继承：
+class D1 : public B1
+
 ## 26/05/01
 
 ### 在类中重载<<操作符
@@ -31,6 +87,9 @@
 operator<<提示此运算符参数太多
 因为定义在类内，它隐含了 this 指针作为第一个参数，
 加上显式写的两个参数，总共三个参数，但operator<<只能有两个操作数。
+
+类大小超过16个字节就可以考虑用const + 引用类型了。
+在Visual Studio中，可以把鼠标悬停在类上查看其大小。
 
 ## 26/04/28
 
