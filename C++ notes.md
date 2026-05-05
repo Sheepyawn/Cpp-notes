@@ -1,5 +1,63 @@
 # C++ Notes
 
+## 26/05/05
+
+### 整数的计算
+
+检验ISBN的有效性时，需要计算其每位乘以权重，再加起来。
+ISBN四个部分分别为group，publisher，title，check。
+我一开始是仿照chrinkus的做法，每部分设置为int类型，实现的。
+后面发现某部分开头可能为0：08919，改成了用string类型来存。
+(详情见PPP——08.exercises/exercises/Ex_05.ixx。[https://github.com/Sheepyawn/PPP/blob/main/08.exercises/exercises/Ex_05.ixx])
+有点舍不得这个算法，把它记在这里。
+
+int类型，获取每一位的信息：
+从低位到高位：
+每次对10取模获得最低位，再除以10获取高一位的数。
+
+    // 计算并检验ISBN的有效位：
+    int multiplier = 2;
+    int sum = 0;
+    // 从低位到高位。每次对10取模，获得最低位的数；再乘以权重。
+    for (int i = int_title; i > 0; i /= 10)
+    {
+        sum += (i % 10) * multiplier;
+        ++multiplier;
+    }
+    for (int i = int_publisher; i > 0; i /= 10)
+    {
+        sum += (i % 10) * multiplier;
+        ++multiplier;
+    }
+    for (int i = int_group; i > 0; i /= 10)
+    {
+        sum += (i % 10) * multiplier;
+        ++multiplier;
+    }
+
+string类型的整数，获取每一位的信息。
+从高位到低位：
+每次加上最高位，乘以10再加下一位。
+
+    int calculate_string(const string& s)
+    // 根据十进制数字的定义，从高位到低位，计算字符串的每个字符乘以位权，返回它们的和。
+    {
+        int num = 0;
+        const size_t size = s.size();
+        int add = 0;
+        // 从低位到高位计算。反过来，最高位可以能一开始就导致整数溢出。
+        for (size_t i = 0; i < size; ++i)
+        {
+            add = PPP::narrow_cast<int>(s[i] - '0');
+            if ((numeric_limits<int>::max() - add)/10 < num)            // num*10 + add 可能溢出。
+                PPP::error("The string_integer \"" + s + "\" is out of conversion range.");
+            num = num * 10 + add;
+        }
+        return num;
+    }
+
+(具体实现见PPP——08.exercises/exercises/function.ixx。[https://github.com/Sheepyawn/PPP/blob/main/08.exercises/exercises/functions.ixx])
+
 ## 26/05/04
 
 ### 用const int& 和 int 给类成员赋值
