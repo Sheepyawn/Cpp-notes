@@ -2,6 +2,32 @@
 
 ## 26/05/07
 
+### size_t是无符号类型
+
+    vector<int> num;
+    for (int i = 0; i < digits; ++i)
+    {
+        num.push_back(n % 10);          // 从低位到高位，依次存入n的每一位到num
+        n /= 10;
+    }
+    for (size_t i = num.size() - 1; -1 < i; --i)
+    {
+        s.push_back(num[i] + '0');      // 从num的末尾到开头，以n的高位到低位的顺序，依次存入n的每一位到s
+    }
+
+见 26/04/03
+
+### 对复数取模
+
+    int n = -123;
+    cout << n % 10 << '\n';
+    cout << n % 100 << '\n';
+
+输出：
+-3
+-23
+对复数取模，结果带有负号。
+
 ### string类型分配空间
 
 string类型刚创建时长度为0，访问任何s[i]都是越界。
