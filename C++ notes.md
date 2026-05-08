@@ -1,5 +1,24 @@
 # C++ Notes
 
+## 26/05/08
+
+### 不同类型相加时的类型转换
+
+    Money::Money(long dollar, double cent)
+    {
+        if (dollar < 0 || cent < 0)
+            PPP::error("negative money");
+        if (100 <= cent)
+            PPP::error("cent out of range: [0, 100)");
+        double double_cents = dollar * 100.0 + cent;            // 相加时long类型被提升为double类型
+        if (LONG_MAX < double_cents)
+            PPP::error("cents number too large for Money");
+        cents = static_cast<long>(double_cents + 0.5);
+    }
+
+dollar\*100可能溢出，所以用dollar\*100.0，在运算时先把dollar转换为double类型。
+LONG_MAX是long类型，和double_cents比较时被隐式转换为double类型。
+
 ## 26/05/07
 
 ### size_t是无符号类型
@@ -126,6 +145,8 @@ ds：
 对string类型，可以用const string& 作为参数。
 
 int类型占4字节，引用类型int&大小相同，但访问数据时需要多一次间接寻址。
+
+超过16字节的类型用const+引用比较合适。
 
 ## 26/05/03
 
