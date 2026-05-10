@@ -1,5 +1,45 @@
 # C++ Notes
 
+## 26/05/09
+
+### 两种自定义输入方式
+
+1：
+
+    istream& operator>>(istream& is, Point& p)
+    {
+        char ch1, ch2, ch3;
+        is >> ch1 >> p.x >> ch2 >> p.y >> ch3;
+        if (!is)
+            return is;
+        if (ch1 != '(' || ch2 != ',' || ch3 != ')')
+        {
+            is.clear(ios::failbit);
+            return is;
+        }
+        return is;
+    }
+
+2：
+
+    istream& operator>>(istream& is, Date& dd)
+    {
+            int y, m, d;
+            char ch1, ch2, ch3, ch4;
+            is >> ch1 >> y >> ch2 >> m >> ch3 >> d >> ch4;
+            if (!is)
+                    return is;
+            if (ch1!='(' || ch2!=',' || ch3!=',' || ch4!=')') {           // oops: format error
+                    is.clear(ios::failbit);
+                    return is;
+            }
+            dd = Date{y,Month(m),d};                                     // update dd
+            return is;
+    }
+
+第一种直接向参数输入。第二种创建新对象，然后赋值给参数。
+第一种可能会出现这种情况：x输入成功，y输入失败。这在输入失败的情况下仍然修改了初始值。
+
 ## 26/05/08
 
 ### 不同类型相加时的类型转换
