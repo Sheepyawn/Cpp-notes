@@ -1,5 +1,87 @@
 # C++ Notes
 
+## 26/05/14
+
+### 输入输出流需要关闭
+
+    void fill_from_file(vector<Point>& points, string& name)
+    {
+        ifstream ist{ name };                  // open file for reading
+        if (!ist)
+            PPP::error("can't open input file ", name);
+
+        for (Point p; ist >> p;)
+            points.push_back(p);
+    }
+
+    export void Dr_12_17()
+    {
+        cout << "Please enter input file name with seven (x, y) pairs." << '\n';
+        string iname;
+        cin >> iname;               // drill/Dr_12_input.txt
+        ifstream ist{ iname };
+        if (!ist)
+            PPP::error("can't opern input file ", iname);
+        
+        vector<Point> original_points;
+        fill_from_file(original_points, iname);
+
+        for (Point x : original_points)
+            cout << x << '\n';
+
+        cout << "Please enter name of output file: " << '\n';
+        string oname;
+        cin >> oname;               // drill/mydata.txt
+        ofstream ost{ oname };
+        if (!ost)
+            PPP::error("can't open output file ", oname);
+
+        for (Point p : original_points)
+            ost << '(' << p.x << ',' << p.y << ")\n";
+        cout << "data were put in file: " << oname << '\n';
+        //ost.close();              // 在这！
+
+        ifstream ist2{ oname };
+        if (!ist2)
+            PPP::error("can't open input file ", oname);
+
+        vector<Point> processed_points;
+        fill_from_file(processed_points, oname);
+
+        cout << "data elements in vector original_points: " << '\n';
+        for (Point x : original_points)
+            cout << x << '\n';
+        cout << "data elements in vector processed_points: " << '\n';
+        for (Point x : processed_points)
+            cout << x << '\n';
+        
+        if (original_points.size() != processed_points.size())
+            PPP::error("Something's wrong!");
+        else
+        {
+            for (size_t i = 0; i < original_points.size(); ++i)
+            {
+                if (original_points[i] != processed_points[i])
+                    PPP::error("Something's wrong!");
+            }
+        }
+    }
+
+控制台会打印“Something's wrong!"。
+调试发现，processed_points的size为0。
+
+问题在于，在读取mydata.txt时，它还没有被写入，因为ost还没有被关闭！
+
+“When a file stream goes out of scope its associated file is closed. When a file is closed its associated buffer is “flushed”; that is, the characters from the buffer are written to the file.”
+
+“Opening the file implicitly as part of the creation of an ostream or an istream is ideal, and a file stream implicitly closes its file upon scope exit; see §15.5。”
+
+所以在这段代码中，需要显式关闭ost。
+
+    ost.close();
+
+或者把输出封装为函数。这样在函数结束后，文件就被写入了。
+
 ## 26/05/09
 
 ### 两种自定义输入方式
