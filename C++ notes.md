@@ -1,5 +1,37 @@
 # C++ Notes
 
+## 26/05/15
+
+### 流状态
+
+    Stream states
+
+    good()
+    The operations succeeded.
+
+    eof()
+    We hit end of input (“end-of-file” aka "eof").
+
+    fail()
+    Something unexpected happened (e.g., we looked for a digit and found ’x’).
+
+    bad()
+    Something unexpected and serious happened (e.g., a disk read error).
+
+注意(!eof())不是其他三个的集合，这四个状态是独立的。
+
+good() 是三个标志位的反集合，只有当三个标志位全部为 false 时才返回 true
+good() = !(fail() || bad() || eof())
+
+    for (int x; ist>>x; )
+        v.push_back(x);
+
+ist出现错误，可能是读取文件完毕，也可能是进入了fail()或bad()状态
+
+尝试读取超出文件末尾时，设置eof()为true。
+
+所有可以用if(!ist && !eof())来检验读取文件时是否出现了fail()和bad()。
+
 ## 26/05/14
 
 ### 输入输出流需要关闭
