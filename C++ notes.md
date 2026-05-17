@@ -1,5 +1,23 @@
 # C++ Notes
 
+## 26/05/17
+
+### string输入16进制int
+
+    string s = "ff";
+    istringstream ss{ s };
+    int v;
+    if (ss >> v)
+        cout << v;
+
+控制台不会输出。
+
+但是把if这行改为：
+
+    if (ss >> hex >> v)
+
+v被输入，控制台看到输出255
+
 ## 26/05/15
 
 ### 流状态
