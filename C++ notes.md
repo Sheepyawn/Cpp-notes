@@ -1,5 +1,24 @@
 # C++ Notes
 
+## 26/05/18
+
+### 函数返回值
+
+    vector<char> reverse(const vector<char>& chars)
+    {
+        constexpr int first = 0;
+        int last = static_cast<int>(chars.size()) - 1;
+        vector<char> reversed;
+        for (int i = last; first <= i; --i)
+            reversed.push_back(chars[i]);
+        return reversed;
+    }
+
+vector<char> reversed = reverse(chars);
+
+ds:C++编译器会优化，不会完全复制函数返回的数组。
+如果返回vector<char>&， 函数结束后，外部reversed接受的reverse函数内部创建的reversed数组指向空内存，引发未定义行为。
+
 ## 26/05/17
 
 ### string输入16进制int
