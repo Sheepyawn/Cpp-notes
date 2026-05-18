@@ -19,6 +19,17 @@ vector<char> reversed = reverse(chars);
 ds:C++编译器会优化，不会完全复制函数返回的数组。
 如果返回vector<char>&， 函数结束后，外部reversed接受的reverse函数内部创建的reversed数组指向空内存，引发未定义行为。
 
+## 分行显示长字符串
+
+    const string s = "Write a function vector<string> split(const string & s, const string & w) that returns a vector of whitespace - separated substrings from the argument s, where whitespace is defined as “ordinary whitespace” plus the characters in w.";
+
+可以写为
+
+    const string s = "Write a function vector<string> split(const string & s, const string & w) "
+    "that returns a vector of whitespace - separated substrings from the argument s, "
+    "where whitespace is defined as “ordinary whitespace” plus the characters in w.";
+
+
 ## 26/05/17
 
 ### string输入16进制int
