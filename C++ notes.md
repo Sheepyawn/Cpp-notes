@@ -29,6 +29,24 @@ ds:C++编译器会优化，不会完全复制函数返回的数组。
     "that returns a vector of whitespace - separated substrings from the argument s, "
     "where whitespace is defined as “ordinary whitespace” plus the characters in w.";
 
+### 删除字符串的最后一个字符
+
+    string vector_to_string(const vector<string>& v)
+    // 把数组里的字符串拼接为一个字符串
+    {
+        string s;
+        for (const string& x : v)
+        {
+            s.append(x);
+            s.append(" ");
+        }
+        if (!s.empty())
+            s.pop_back();       // 除去多添加在末尾的空格
+        return s;
+    }
+
+不能使用s.erase(s.end())。
+ds:end() 指向最后一个元素之后，不能直接删除。
 
 ## 26/05/17
 
