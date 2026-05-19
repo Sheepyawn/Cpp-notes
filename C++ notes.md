@@ -2,6 +2,34 @@
 
 ## 26/05/19
 
+### ifs读取int类型时会检查是否越界
+
+    const string fname = "00.txt";
+
+    int main()
+    {
+        ifstream ifs{ fname };
+        int x;
+        ifs >> x;
+        if (!ifs)
+            cout << "Error!" << '\n';
+        else
+            cout << x;
+    }
+
+会输出：Error!
+
+ds：
+1.读取过程：
+从输入流中读取数字字符序列
+尝试将其转换为 int 类型
+检查转换结果是否在 int 范围内
+
+2.越界时的处理：
+设置 failbit（失败标志位）
+x 不会被修改（C++11 及以后的标准）
+不会抛出异常（除非主动设置 exceptions）
+
 ### 使用ofstream创建文件
 
     vector<double> input;
