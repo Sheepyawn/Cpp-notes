@@ -1,5 +1,29 @@
 # C++ Notes
 
+## 26/05/19
+
+### 使用ofstream创建文件
+
+    vector<double> input;
+    const string iname = "exercises/Ex_14_input.txt";
+    const string oname = "exercises/Ex_14_output.txt";
+    fill_from_file(input, iname);
+
+    ofstream ost{ oname };
+    if (!ost)
+        PPP::error("can't open file: " + oname);
+    int size = static_cast<int>(input.size());
+    constexpr int num_per_line = 4;
+    for (int i = 0; i < size; ++i)
+    {
+        if (i % num_per_line == 0)
+            ost << '\n';
+        ost << setw(20) << scientific << setprecision(8) << input[i];
+    }
+
+文件创建成功，只是没有被添加到VisualStudio的解决方案中。
+需要到文件夹中查看文件是否创建成功，再把它添加到解决方案。
+
 ## 26/05/18
 
 ### 函数返回值
