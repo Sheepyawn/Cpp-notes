@@ -1,5 +1,39 @@
 # C++ Notes
 
+## 26/05/20
+
+### ifstream的eof()和fail()状态
+
+    void ist_state(ifstream& ist)
+    // 依次判断ist处于哪种状态，做出相应处理
+    {
+        if (ist.eof())                      // fine: we found the end of file
+            return;
+        if (ist.bad())                      // stream corrupted;
+            PPP::error("ist is bad");       // let’s get out of here!
+        if (ist.fail())                     // clean up the mess as best we can and report the problem
+            PPP::error("ist is fail");
+    }
+
+这里有bug，如果文件读到最后一个时出错，那么会因为先检查eof()而不报错。
+
+如果把fail的检查放到eof()检查的前面，
+又会因为文件读取完毕时会同时设置eof()和fail()，
+导致错误地报错。
+
+改成：
+
+    void ist_state(ifstream& ist)
+    // 依次判断ist处于哪种状态，做出相应处理
+    {
+        if (ist.bad())                      // stream corrupted;
+            PPP::error("ist is bad");       // let’s get out of here!
+        if (ist.fail() && !ist.eof())       // clean up the mess as best we can and report the problem
+            PPP::error("ist is fail");
+        if (ist.eof())                      // fine: we found the end of file
+            return;
+    }
+
 ## 26/05/19
 
 ### ifs读取int类型时会检查是否越界
