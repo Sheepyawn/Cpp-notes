@@ -1,5 +1,26 @@
 # C++ Notes
 
+## 26/05/23
+
+### cin输入时输入数字+字母e
+
+    while (ch != '\n' && isspace(ch))
+        is.get(ch);
+
+PPP第6章的简易计算器
+输入1+2e，在这里进入死循环。
+而输入1+2pi、1+2m、1+2r等等，则不会。
+
+这是因为e跟在数字后面被识别为科学计数法的指数，而不是字母e。
+而数字后跟e但没有指数(如 12e)，cin 进入 fail 状态。
+
+改为
+
+    while (ch != '\n' && isspace(ch) && is.good())
+        is.get(ch);
+
+程序正常退出。
+
 ## 26/05/20
 
 ### ifstream的eof()和fail()状态
