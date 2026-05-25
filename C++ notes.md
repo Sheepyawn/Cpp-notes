@@ -1,5 +1,25 @@
 # C++ Notes
 
+## 26/05/25
+
+### 连字符和减号
+
+    for (Distribution d; ifs >> d; ) {
+        if (d.year < base_year || end_year < d.year)
+            PPP::error("year out of range");
+
+        double all = d.young + d.middle + d.old;
+        if (all−100 > 1.5 || 100−all > 1.5)       // take rounding errors into account
+            PPP::error("percentages don't add up");
+
+        // ... use the data ...
+    }
+
+这段是复制的PPP电子书上的代码。粘贴到Visual Studio中，all−100报错：all——未定义标识符。
+ds：−是连字符而不是减号。
+−,-
+。。。
+
 ## 26/05/24
 
 ### 数字类型后面跟字母e
